@@ -8,12 +8,39 @@ function Signup() {
   const passInputRef = useRef();
   const confirmInputRef = useRef();
   const [showError, setShowError] = useState({ active: false, message: "" });
-  const SubmitHandler = e => {
+  const SubmitHandler = async(e) => {
     e.preventDefault();
     let pass = passInputRef.current.value;
     let cpass = confirmInputRef.current.value;
     if (pass === cpass) {
-      console.log("hi");
+        const response = await fetch(
+            `https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyCYNOpI0OEGmCAOJsAmLIIFICI97RaoUK8
+            `,
+            {
+              method: "POST",
+              headers: {
+                "content-type": "application/json"
+              },
+              body: JSON.stringify({
+                email: emailInputRef.current.value,
+                password: passInputRef.current.value,
+                returnSecureToken: true
+              })
+            }
+          );
+          const data = await response.json();
+          if (data.error) {
+            setShowError({ active: true, message: data.error.message });
+            setTimeout(() => setShowError({ active: false, message: "" }), 3000);
+            emailInputRef.current.value = "";
+            passInputRef.current.value = "";
+          }
+          else{
+            setShowError({ active: "true", message: "Login SuccessFully" });
+            setTimeout(() => setShowError({ active: false, message: "" }), 3000);
+            emailInputRef.current.value = "";
+            passInputRef.current.value = "";
+          }
     } else {
       setShowError({
         active: true,
