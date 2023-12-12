@@ -1,13 +1,15 @@
 import Signup from "./Auth/Signup";
-import {useState} from 'react';
+import { useState } from "react";
 function App() {
-  const [userLoggedIn, setUserLoggedIn] = useState(false);
-  const userLoginHandler = () =>{
-    setUserLoggedIn(true)
-  }
+  const idToken = localStorage.getItem("id");
+  const [userLoggedIn, setUserLoggedIn] = useState(idToken ? true : false);
+
+  const userLoginHandler = () => {
+    setUserLoggedIn(true);
+  };
   return (
     <div className="App">
-      {!userLoggedIn && <Signup userLogin= {userLoginHandler} />}
+      {!userLoggedIn && <Signup userLogin={userLoginHandler} />}
       {userLoggedIn && <h1>Welcome to Expense Tracker !!</h1>}
     </div>
   );

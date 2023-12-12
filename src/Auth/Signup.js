@@ -29,7 +29,6 @@ function Signup(props) {
         }
       );
       const data = await response.json();
-      console.log(data);
       if (data.error) {
         setShowError({ active: true, message: data.error.message });
         setTimeout(() => setShowError({ active: false, message: "" }), 3000);
@@ -38,6 +37,7 @@ function Signup(props) {
       } else {
         setShowError({ active: "true", message: "login SuccessFully" });
         setTimeout(() => setShowError({ active: false, message: "" }), 3000);
+        localStorage.setItem('id',JSON.stringify(data.idToken));
         props.userLogin();
         emailInputRef.current.value = "";
         passInputRef.current.value = "";
@@ -60,7 +60,6 @@ function Signup(props) {
           }
         );
         const data = await response.json();
-        console.log(data);
         if (data.error) {
           setShowError({ active: true, message: data.error.message });
           setTimeout(() => setShowError({ active: false, message: "" }), 3000);
@@ -84,7 +83,6 @@ function Signup(props) {
       }
     }
   };
-  console.log(showloginpage);
   return (
     <div>
       {showError.active &&
