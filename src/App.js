@@ -1,6 +1,6 @@
 import Signup from "./Auth/Signup";
 import { useState } from "react";
-import Header from "./Layout/Header";
+import Root from "./Layout/Root";
 
 import UpdateProfile from "./UpdateProfile";
 import {
@@ -11,7 +11,6 @@ import {
 function App() {
   const idToken = localStorage.getItem("id");
   const initalState = idToken ? true : false;
-  console.log(initalState);
   const [userLoggedIn, setUserLoggedIn] = useState(initalState);
 
   const userLoginHandler = () => {
@@ -20,8 +19,9 @@ function App() {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: userLoggedIn ? <Header /> : <Navigate to="/signup" replace />,
+      element: userLoggedIn ? <Root /> : <Navigate to="/signup" replace />,
       children: [
+        
         {
           path: "/update-profile",
           element: <UpdateProfile/>
@@ -42,10 +42,6 @@ function App() {
   ]);
   return (
     <RouterProvider router={router} />
-    // <div className="App">
-    //   {!userLoggedIn && <Signup userLogin={userLoginHandler} />}
-    //   {userLoggedIn && <Header/>}
-    // </div>
   );
 }
 
