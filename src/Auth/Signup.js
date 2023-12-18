@@ -37,6 +37,7 @@ function Signup(props) {
       } else {
         setShowError({ active: "true", message: "login SuccessFully" });
         setTimeout(() => setShowError({ active: false, message: "" }), 3000);
+        
         localStorage.setItem('id',JSON.stringify(data.idToken));
         props.userLogin();
         emailInputRef.current.value = "";
