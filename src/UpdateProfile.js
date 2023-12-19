@@ -1,14 +1,50 @@
-import { useRef } from "react";
-import { Container, Row, Col, Form, Button } from "react-bootstrap";
+import { useEffect, useRef, useState } from "react";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Toast,
+  ToastContainer
+} from "react-bootstrap";
 
 const UpdateProfile = () => {
   const nameinputRef = useRef();
   const urlInputRef = useRef();
-  const InputHandler = async(e) => {
+
+  const [showError, setShowError] = useState({ active: false, message: "" });
+  const tokenId = JSON.parse(localStorage.getItem("id"));
+  useEffect(
+    () => {
+      fetch(
+        "https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCYNOpI0OEGmCAOJsAmLIIFICI97RaoUK8",
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json"
+          },
+          body: JSON.stringify({
+            idToken: tokenId
+          })
+        }
+      )
+        .then(res => res.json())
+        .then(data => {
+          nameinputRef.current.value = data.users[0].displayName
+            ? data.users[0].displayName
+            : "";
+          urlInputRef.current.value = data.users[0].photoUrl
+            ? data.users[0].photoUrl
+            : "";
+        });
+    },
+    [tokenId]
+  );
+  const InputHandler = async e => {
     e.preventDefault();
-    const tokenId = JSON.parse(localStorage.getItem('id'));
-  
-    const response = await fetch(
+
+    await fetch(
       "https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyCYNOpI0OEGmCAOJsAmLIIFICI97RaoUK8",
       {
         method: "POST",
@@ -16,17 +52,18 @@ const UpdateProfile = () => {
           "content-type": "application/json"
         },
         body: JSON.stringify({
-          idToken : tokenId,
+          idToken: tokenId,
           displayName: nameinputRef.current.value,
           photoUrl: urlInputRef.current.value,
           returnSecureToken: true
         })
       }
     );
-    const data = await response.json();
-    nameinputRef.current.value = '';
-    urlInputRef.current.value = '';
-    console.log(data);
+
+    setShowError({ active: "true", message: "Updated SuccessFully" });
+    setTimeout(() => setShowError({ active: false, message: "" }), 3000);
+    nameinputRef.current.value = "";
+    urlInputRef.current.value = "";
   };
   return (
     <Container>
@@ -46,6 +83,21 @@ const UpdateProfile = () => {
           Submit
         </Button>
       </Form>
+      {showError.active &&
+        <ToastContainer
+          className="p-3"
+          position="top-center"
+          style={{ zIndex: 1 }}
+        >
+          <Toast>
+            <Toast.Header closeButton={false}>
+              <strong className="me-auto">Message</strong>
+            </Toast.Header>
+            <Toast.Body>
+              {showError.message}
+            </Toast.Body>
+          </Toast>
+        </ToastContainer>}
     </Container>
   );
 };
