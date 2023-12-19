@@ -3,6 +3,7 @@ import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
 import { Alert, Toast, ToastContainer } from "react-bootstrap";
 import { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 function Signup(props) {
   const emailInputRef = useRef();
   const passInputRef = useRef();
@@ -156,6 +157,7 @@ function Signup(props) {
           {showloginpage
             ? <p>Create an account ? Signup</p>
             : <p>Have an Account ? Login</p>}
+            <p>Forget Your Password <Link to="forget-pass">Click Here</Link></p>
         </Alert>
       </Card>
     </div>

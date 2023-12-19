@@ -31,7 +31,6 @@ const UpdateProfile = () => {
       )
         .then(res => res.json())
         .then(data => {
-          console.log(data)
           nameinputRef.current.value = data.users[0].displayName
             ? data.users[0].displayName
             : "";
