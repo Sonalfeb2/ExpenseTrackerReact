@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Container, Row, Col, Button } from "react-bootstrap";
 
 import { Outlet } from "react-router-dom";
-const Root = () => {
+const Root = (props) => {
   const idToken = JSON.parse(localStorage.getItem("id"));
   const handleEmailVerification = async () => {
     const response = await fetch(
@@ -21,18 +21,27 @@ const Root = () => {
     const data = await response.json();
     console.log(data);
   };
+  const handleLogout = () =>{
+    props.handleUserLogout();
+
+  }
   return (
     <Container fluid>
       <Row>
         <Col sm={6}>Welcome Expense Tracker !!</Col>
-        <Col sm={4} className="bg-info">
+        <Col sm={3} className="bg-info">
           Your Profile is incomplete.<Link to="/update-profile">
-            {" "}Complete now
+          Complete now
           </Link>
         </Col>
-        <Col sm={2}>
-          <Button variant="danger" onClick={handleEmailVerification}>
+        <Col lg={1}>
+          <Button variant="success" onClick={handleEmailVerification}>
             Verify Email
+          </Button>
+        </Col>
+        <Col sm={1}>
+          <Button variant="danger" onClick={()=>handleLogout()}>
+            Logout
           </Button>
         </Col>
       </Row>

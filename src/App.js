@@ -16,10 +16,14 @@ function App() {
   const userLoginHandler = () => {
     setUserLoggedIn(true);
   };
+  const handleUserLogout = () =>{
+    setUserLoggedIn(false)
+    localStorage.clear('id')
+  }
   const router = createBrowserRouter([
     {
       path: "/",
-      element: userLoggedIn ? <Root /> : <Navigate to="/signup" replace />,
+      element: userLoggedIn ? <Root handleUserLogout = {handleUserLogout} /> : <Navigate to="/signup" replace />,
       children: [
         
         {
