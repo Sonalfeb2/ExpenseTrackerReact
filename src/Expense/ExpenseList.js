@@ -1,20 +1,20 @@
 import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
-
+import axios from "axios";
 function ExpenseTable(props) {
   const [expenseList, setExpenseList] = useState([]);
   useEffect(() => {
-    let arr = []
-    fetch(
+    let arr = [];
+    axios(
       "https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/expense.json"
     )
-      .then(res => res.json())
-      .then(data => {
-        for (let obj in data) {
-          arr.push(data[obj]);
+      .then(res => {
+        for (let obj in res.data) {
+          arr.push(res.data[obj]);
         }
-        setExpenseList(arr)
-      });
+        setExpenseList(arr);
+      })
+      .catch(err => console.log(err));
   }, []);
   useEffect(
     () => {

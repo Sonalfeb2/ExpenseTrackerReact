@@ -2,6 +2,8 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import ExpenseTable from "./ExpenseList";
 import { useRef, useState } from "react";
+import axios from "axios";
+
 function ExpenseForm() {
   const priceInputRef = useRef();
   const desInputRef = useRef();
@@ -15,17 +17,10 @@ function ExpenseForm() {
       des: desInputRef.current.value,
       cat: cateInputRef.current.value
     };
-    const res = await fetch(
+    const data = await axios.post(
       "https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/expense.json",
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json"
-        },
-        body: JSON.stringify(obj)
-      }
-    );
-    const data = await res.json();
+      obj
+    ).then(res=>res.data).catch(err=>console.log(err))
     if (data) {
       setNewExpense(obj);
       setShowAlert({ message: "Expenses Added SuccessFully", active: true });
