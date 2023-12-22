@@ -3,6 +3,19 @@ import Table from "react-bootstrap/Table";
 
 function ExpenseTable(props) {
   const [expenseList, setExpenseList] = useState([]);
+  useEffect(() => {
+    let arr = []
+    fetch(
+      "https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/expense.json"
+    )
+      .then(res => res.json())
+      .then(data => {
+        for (let obj in data) {
+          arr.push(data[obj]);
+        }
+        setExpenseList(arr)
+      });
+  }, []);
   useEffect(
     () => {
       if (props.newExpense) {
@@ -25,15 +38,23 @@ function ExpenseTable(props) {
         </thead>
         <tbody>
           {expenseList.length > 0
-            ? expenseList.map((list,index) =>
+            ? expenseList.map((list, index) =>
                 <tr key={index}>
-                  <td>{index}</td>
-                  <td>Rs: {list.price}</td>
-                  <td>{list.des}</td>
-                  <td>{list.cat}</td>
+                  <td>
+                    {index}
+                  </td>
+                  <td>
+                    Rs: {list.price}
+                  </td>
+                  <td>
+                    {list.des}
+                  </td>
+                  <td>
+                    {list.cat}
+                  </td>
                 </tr>
               )
-            : <tr style={{color: 'red'}} >ZERO EXPENSE FOUND</tr>}
+            : <tr style={{ color: "red" }}>ZERO EXPENSE FOUND</tr>}
         </tbody>
       </Table>
     </div>

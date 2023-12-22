@@ -7,19 +7,39 @@ function ExpenseForm() {
   const desInputRef = useRef();
   const cateInputRef = useRef();
   const [newExpense, setNewExpense] = useState();
-  const formHandler = e => {
+  const [showAlert, setShowAlert] = useState({ message: "", active: false });
+  const formHandler = async e => {
     e.preventDefault();
-    setNewExpense({
+    const obj = {
       price: priceInputRef.current.value,
       des: desInputRef.current.value,
       cat: cateInputRef.current.value
-    });
-    priceInputRef.current.value = "";
-    desInputRef.current.value = "";
-    cateInputRef.current.value = "Select Category"
+    };
+    const res = await fetch(
+      "https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/expense.json",
+      {
+        method: "POST",
+        headers: {
+          "content-type": "application/json"
+        },
+        body: JSON.stringify(obj)
+      }
+    );
+    const data = await res.json();
+    if (data) {
+      setNewExpense(obj);
+      setShowAlert({ message: "Expenses Added SuccessFully", active: true });
+      setTimeout(() => {
+        setShowAlert({ message: "", active: false });
+      }, 2000);
+    }
   };
   return (
     <div>
+      {showAlert.active &&
+        <div className="alert alert-dark w-50 mx-auto" role="alert">
+          {showAlert.message}
+        </div>}
       <Form
         className="w-50 mx-auto mb-3"
         style={{ background: "#008067", borderRadius: "24px" }}
@@ -29,10 +49,8 @@ function ExpenseForm() {
           <Form.Group className="mb-3">
             <Form.Label style={{ color: "white" }}>Price</Form.Label>
             <Form.Control
-              type="text"
-              title="Number only [0-9]- Max - 10 digit allowed"
+              type="number"
               placeholder="Enter Price"
-              pattern="[0-9]{10}"
               required
               ref={priceInputRef}
             />
