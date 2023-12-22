@@ -9,6 +9,7 @@ import {
   RouterProvider
 } from "react-router-dom";
 import ForgetPass from "./ForgetPass";
+import ExpenseForm from "./Expense/ExpenseForm";
 function App() {
   const idToken = localStorage.getItem("id");
   const initalState = idToken ? true : false;
@@ -31,6 +32,10 @@ function App() {
         {
           path: "/update-profile",
           element: <UpdateProfile />
+        }
+        ,{
+          path: '/',
+          element: <ExpenseForm/>
         }
       ]
     },
