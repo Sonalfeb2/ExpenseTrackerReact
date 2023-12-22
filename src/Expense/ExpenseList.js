@@ -1,20 +1,26 @@
 import { useEffect, useState } from "react";
 import Table from "react-bootstrap/Table";
 import axios from "axios";
+import { Button } from "react-bootstrap";
 function ExpenseTable(props) {
+    
   const [expenseList, setExpenseList] = useState([]);
-  useEffect(() => {
+  const getData = async () =>{
     let arr = [];
-    axios(
+    await axios(
       "https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/expense.json"
     )
       .then(res => {
         for (let obj in res.data) {
-          arr.push(res.data[obj]);
+          arr.push({ id: obj, ...res.data[obj] });
         }
-        setExpenseList(arr);
       })
       .catch(err => console.log(err));
+      
+      setExpenseList(arr)
+  }
+  useEffect(() => {
+     getData();
   }, []);
   useEffect(
     () => {
@@ -24,6 +30,12 @@ function ExpenseTable(props) {
     },
     [props.newExpense]
   );
+  const handleDelete = async(id)=>{
+    await axios.delete(`https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/expense/${id}.json`);
+    getData()
+
+
+  }
   return (
     <div className="w-80">
       <h1>Expense List</h1>
@@ -34,6 +46,7 @@ function ExpenseTable(props) {
             <th>Price</th>
             <th>Description</th>
             <th>Category</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -52,9 +65,13 @@ function ExpenseTable(props) {
                   <td>
                     {list.cat}
                   </td>
+                  <td>
+                    <Button variant="info" onClick={()=>props.editHandler(list.id)}>Edit</Button>
+                    <Button variant="danger"  onClick={()=>handleDelete(list.id)}>Delete</Button>
+                  </td>
                 </tr>
               )
-            : <tr style={{ color: "red" }}>ZERO EXPENSE FOUND</tr>}
+            : <tr style={{ color: "red" }}><td>ZERO EXPENSE FOUND</td></tr>}
         </tbody>
       </Table>
     </div>
