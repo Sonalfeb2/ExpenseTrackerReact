@@ -8,13 +8,14 @@ import {
   Toast,
   ToastContainer
 } from "react-bootstrap";
+import { useSelector } from "react-redux";
 
 const UpdateProfile = () => {
   const nameinputRef = useRef();
   const urlInputRef = useRef();
+  const id = useSelector(state=>state.authentication.userId);
 
   const [showError, setShowError] = useState({ active: false, message: "" });
-  const tokenId = JSON.parse(localStorage.getItem("id"));
   useEffect(
     () => {
       fetch(
@@ -25,7 +26,7 @@ const UpdateProfile = () => {
             "content-type": "application/json"
           },
           body: JSON.stringify({
-            idToken: tokenId
+            idToken: id
           })
         }
       )
@@ -39,7 +40,7 @@ const UpdateProfile = () => {
             : "";
         });
     },
-    [tokenId]
+    [id]
   );
   const InputHandler = async e => {
     e.preventDefault();
@@ -52,7 +53,7 @@ const UpdateProfile = () => {
           "content-type": "application/json"
         },
         body: JSON.stringify({
-          idToken: tokenId,
+          idToken: id,
           displayName: nameinputRef.current.value,
           photoUrl: urlInputRef.current.value,
           returnSecureToken: true

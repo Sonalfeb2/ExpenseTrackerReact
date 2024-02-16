@@ -4,7 +4,10 @@ import Card from "react-bootstrap/Card";
 import { Alert, Toast, ToastContainer } from "react-bootstrap";
 import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
-function Signup(props) {
+import {  useDispatch } from "react-redux";
+import { AuthActions } from "../store/AuthReducer";
+function Signup() {
+  const dispatch = useDispatch();
   const emailInputRef = useRef();
   const passInputRef = useRef();
   const confirmInputRef = useRef();
@@ -38,9 +41,7 @@ function Signup(props) {
       } else {
         setShowError({ active: "true", message: "login SuccessFully" });
         setTimeout(() => setShowError({ active: false, message: "" }), 3000);
-        
-        localStorage.setItem('id',JSON.stringify(data.idToken));
-        props.userLogin();
+        dispatch(AuthActions.login(data.idToken))
         emailInputRef.current.value = "";
         passInputRef.current.value = "";
       }

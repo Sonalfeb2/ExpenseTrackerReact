@@ -2,8 +2,11 @@ import { Link } from "react-router-dom";
 import { Container, Row, Col, Button } from "react-bootstrap";
 
 import { Outlet } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { AuthActions } from "../store/AuthReducer";
 const Root = (props) => {
-  const idToken = JSON.parse(localStorage.getItem("id"));
+  const dispatch = useDispatch();
+  const userId = useSelector(state=>state.authentication.userId);
   const handleEmailVerification = async () => {
     const response = await fetch(
       "https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCYNOpI0OEGmCAOJsAmLIIFICI97RaoUK8",
@@ -14,7 +17,7 @@ const Root = (props) => {
         },
         body: JSON.stringify({
           requestType: "VERIFY_EMAIL",
-          idToken: idToken
+          idToken: userId
         })
       }
     );
@@ -22,7 +25,7 @@ const Root = (props) => {
     console.log(data);
   };
   const handleLogout = () =>{
-    props.handleUserLogout();
+    dispatch(AuthActions.logout())
 
   }
   return (

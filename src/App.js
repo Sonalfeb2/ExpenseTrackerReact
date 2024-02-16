@@ -1,5 +1,4 @@
 import Signup from "./Auth/Signup";
-import { useState } from "react";
 import Root from "./Layout/Root";
 
 import UpdateProfile from "./UpdateProfile";
@@ -10,23 +9,15 @@ import {
 } from "react-router-dom";
 import ForgetPass from "./ForgetPass";
 import ExpenseForm from "./Expense/ExpenseForm";
-function App() {
-  const idToken = localStorage.getItem("id");
-  const initalState = idToken ? true : false;
-  const [userLoggedIn, setUserLoggedIn] = useState(initalState);
+import { useSelector } from "react-redux";
 
-  const userLoginHandler = () => {
-    setUserLoggedIn(true);
-  };
-  const handleUserLogout = () => {
-    setUserLoggedIn(false);
-    localStorage.clear("id");
-  };
+function App() {
+  const isLogin = useSelector(state=>state.authentication.isLogin);
   const router = createBrowserRouter([
     {
       path: "/",
-      element: userLoggedIn
-        ? <Root handleUserLogout={handleUserLogout} />
+      element: isLogin
+        ? <Root />
         : <Navigate to="/signup" replace />,
       children: [
         {
@@ -44,9 +35,9 @@ function App() {
       children: [
         {
           path: "/signup",
-          element: userLoggedIn
+          element: isLogin
             ? <Navigate to="/" replace />
-            : <Signup userLogin={userLoginHandler} />
+            : <Signup  />
         },
         {
           path: "/signup/forget-pass",
