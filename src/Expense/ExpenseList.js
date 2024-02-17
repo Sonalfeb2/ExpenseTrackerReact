@@ -39,10 +39,26 @@ function ExpenseTable(props) {
     );
     getData();
   };
- 
+  function makeCSV(data) {
+    const arr = [["price", "des", "cat"]];
+    for (let list of data) {
+      let arr1 = [];
+      arr1[0] = list.price;
+      arr1[1] = list.des;
+      arr1[2] = list.cat;
+      arr.push(arr1);
+    }
+    return arr.map(r=>r).join('\n');
+  }
+  const blob1 = new Blob([makeCSV(storeExpenseList)]);
+  const blob2 = new Blob(["Hello This is Sonal, Thanks for downloading"])
   return (
     <div className="w-80">
       <h1>Expense List</h1>
+      <a href={URL.createObjectURL(blob1)} download={"file.csv"}>
+        Download CSV File
+      </a><br></br>
+      <a href={URL.createObjectURL(blob2)} download={"text.txt"}>Download Text</a>
       <Table striped bordered hover>
         <thead>
           <tr>
