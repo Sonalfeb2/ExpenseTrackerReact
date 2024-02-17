@@ -4,13 +4,15 @@ import ExpenseTable from "./ExpenseList";
 import { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { ExpenseSliceActions } from "../store/ExpenseReducer";
 
 function ExpenseForm() {
+  const dispatch = useDispatch();
   const history = useNavigate();
   const priceInputRef = useRef();
   const desInputRef = useRef();
   const cateInputRef = useRef();
-  const [newExpense, setNewExpense] = useState();
   const [showAlert, setShowAlert] = useState({ message: "", active: false });
   const [isUpdate, setIsUpdate] = useState(false);
 
@@ -21,7 +23,7 @@ function ExpenseForm() {
     setIsUpdate(true);
     axios
       .get(
-        `https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/expense/${id}.json`
+        `https://expensetrackerlist-default-rtdb.firebaseio.com/expense/${id}.json`
       )
       .then(res => {
         priceInputRef.current.value = res.data.price;
@@ -34,7 +36,7 @@ function ExpenseForm() {
     if (isUpdate) {
       const updateId = queryParams.get("id");
       await axios.put(
-        `https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/expense/${updateId}.json`,
+        `https://expensetrackerlist-default-rtdb.firebaseio.com/${updateId}.json`,
         {
           price: priceInputRef.current.value,
           des: desInputRef.current.value,
@@ -59,13 +61,13 @@ function ExpenseForm() {
       };
       const data = await axios
         .post(
-          "https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/expense.json",
+          "https://expensetrackerlist-default-rtdb.firebaseio.com/expense.json",
           obj
         )
         .then(res => res.data)
         .catch(err => console.log(err));
       if (data) {
-        setNewExpense(obj);
+        dispatch(ExpenseSliceActions.newExpense(obj))
         setShowAlert({ message: "Expenses Added SuccessFully", active: true });
         setTimeout(() => {
           setShowAlert({ message: "", active: false });
@@ -123,7 +125,7 @@ function ExpenseForm() {
           </Button>
         </div>
       </Form>
-      <ExpenseTable newExpense={newExpense} editHandler={editHandler} />
+      <ExpenseTable  editHandler={editHandler} />
     </div>
   );
 }

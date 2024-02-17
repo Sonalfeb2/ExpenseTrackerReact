@@ -1,14 +1,24 @@
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import Table from "react-bootstrap/Table";
 import axios from "axios";
 import { Button } from "react-bootstrap";
+import { useDispatch, useSelector } from "react-redux";
+import { ExpenseSliceActions } from "../store/ExpenseReducer";
 function ExpenseTable(props) {
-    
-  const [expenseList, setExpenseList] = useState([]);
-  const getData = async () =>{
+  const dispatch = useDispatch();
+  const storeExpenseList = useSelector(state => state.expense.list);
+  const isPremiumActivate = useSelector(state => state.expense.activatePremium);
+  useLayoutEffect(() => {
+    if (isPremiumActivate) {
+      document.body.style.backgroundColor = "black";
+    } else {
+      document.body.style.backgroundColor = "white";
+    }
+  });
+  const getData = async () => {
     let arr = [];
     await axios(
-      "https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/expense.json"
+      "https://expensetrackerlist-default-rtdb.firebaseio.com/expense.json"
     )
       .then(res => {
         for (let obj in res.data) {
@@ -16,26 +26,20 @@ function ExpenseTable(props) {
         }
       })
       .catch(err => console.log(err));
-      
-      setExpenseList(arr)
-  }
+    if (arr !== undefined) {
+      dispatch(ExpenseSliceActions.fetchExpense(arr));
+    }
+  };
   useEffect(() => {
-     getData();
+    getData();
   }, []);
-  useEffect(
-    () => {
-      if (props.newExpense) {
-        setExpenseList(prev => [...prev, props.newExpense]);
-      }
-    },
-    [props.newExpense]
-  );
-  const handleDelete = async(id)=>{
-    await axios.delete(`https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/expense/${id}.json`);
-    getData()
-
-
-  }
+  const handleDelete = async id => {
+    await axios.delete(
+      `https://expensetrackerlist-default-rtdb.firebaseio.com//expense/${id}.json`
+    );
+    getData();
+  };
+ 
   return (
     <div className="w-80">
       <h1>Expense List</h1>
@@ -50,8 +54,8 @@ function ExpenseTable(props) {
           </tr>
         </thead>
         <tbody>
-          {expenseList.length > 0
-            ? expenseList.map((list, index) =>
+          {storeExpenseList !== undefined
+            ? storeExpenseList.map((list, index) =>
                 <tr key={index}>
                   <td>
                     {index}
@@ -66,12 +70,32 @@ function ExpenseTable(props) {
                     {list.cat}
                   </td>
                   <td>
-                    <Button variant="info" onClick={()=>props.editHandler(list.id)}>Edit</Button>
-                    <Button variant="danger"  onClick={()=>handleDelete(list.id)}>Delete</Button>
+                    <Button
+                      variant="success"
+                      onClick={() => props.editHandler(list.id)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={() => handleDelete(list.id)}
+                    >
+                      Delete
+                    </Button>
+                    {list.price >= 10000 &&
+                      <Button
+                        variant="info"
+                        onClick={() =>
+                          dispatch(ExpenseSliceActions.activatePremium())}
+                      >
+                        Activate Premium
+                      </Button>}
                   </td>
                 </tr>
               )
-            : <tr style={{ color: "red" }}><td>ZERO EXPENSE FOUND</td></tr>}
+            : <tr style={{ color: "red" }}>
+                <td>ZERO EXPENSE FOUND</td>
+              </tr>}
         </tbody>
       </Table>
     </div>
