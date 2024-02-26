@@ -1,11 +1,11 @@
+
+
 import { useEffect, useLayoutEffect } from "react";
 import Table from "react-bootstrap/Table";
-import axios from "axios";
 import { Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { ExpenseSliceActions } from "../store/ExpenseReducer";
 function ExpenseTable(props) {
-  const dispatch = useDispatch();
   const storeExpenseList = useSelector(state => state.expense.list);
   const isPremiumActivate = useSelector(state => state.expense.activatePremium);
   useLayoutEffect(() => {
@@ -15,14 +15,15 @@ function ExpenseTable(props) {
       document.body.style.backgroundColor = "white";
     }
   });
+  
+  const dispatch = useDispatch();
   const getData = async () => {
     let arr = [];
-    await axios(
+    await fetch(
       "https://expensetrackerlist-default-rtdb.firebaseio.com/expense.json"
-    )
-      .then(res => {
-        for (let obj in res.data) {
-          arr.push({ id: obj, ...res.data[obj] });
+    ).then(res=>res.json()).then(data => {
+        for (let obj in data) {
+          arr.push({ id: obj, ...data[obj] });
         }
       })
       .catch(err => console.log(err));
@@ -31,11 +32,14 @@ function ExpenseTable(props) {
     }
   };
   useEffect(() => {
-    getData();
-  }, []);
+    if(!props.isUpdate){
+    getData();}
+  }, [props.isUpdate]);
   const handleDelete = async id => {
-    await axios.delete(
-      `https://expensetrackerlist-default-rtdb.firebaseio.com//expense/${id}.json`
+    await fetch(
+      `https://expensetrackerlist-default-rtdb.firebaseio.com//expense/${id}.json`,{
+        method: 'DELETE'
+      }
     );
     getData();
   };
@@ -104,7 +108,7 @@ function ExpenseTable(props) {
                         onClick={() =>
                           dispatch(ExpenseSliceActions.activatePremium())}
                       >
-                        Activate Premium
+                        {isPremiumActivate ? 'Disable Premium':'Activate Premium'}
                       </Button>}
                   </td>
                 </tr>

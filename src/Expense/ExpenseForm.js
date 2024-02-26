@@ -35,8 +35,9 @@ function ExpenseForm() {
     e.preventDefault();
     if (isUpdate) {
       const updateId = queryParams.get("id");
+      
       await axios.put(
-        `https://expensetrackerlist-default-rtdb.firebaseio.com/${updateId}.json`,
+        `https://expensetrackerlist-default-rtdb.firebaseio.com/expense/${updateId}.json`,
         {
           price: priceInputRef.current.value,
           des: desInputRef.current.value,
@@ -45,6 +46,7 @@ function ExpenseForm() {
       );
 
       setShowAlert({ message: "Updated SuccessFully", active: true });
+      setIsUpdate(false)
       setTimeout(() => {
         setShowAlert({ message: "", active: false });
 
@@ -125,7 +127,7 @@ function ExpenseForm() {
           </Button>
         </div>
       </Form>
-      <ExpenseTable  editHandler={editHandler} />
+      <ExpenseTable  editHandler={editHandler} isUpdate={isUpdate}/>
     </div>
   );
 }
