@@ -8,6 +8,8 @@ import { useDispatch } from "react-redux";
 import { ExpenseSliceActions } from "../store/ExpenseReducer";
 
 function ExpenseForm() {
+  const idToken = localStorage.getItem('idToken');
+
   const dispatch = useDispatch();
   const history = useNavigate();
   const priceInputRef = useRef();
@@ -23,7 +25,7 @@ function ExpenseForm() {
     setIsUpdate(true);
     axios
       .get(
-        `https://expensetrackerlist-default-rtdb.firebaseio.com/expense/${id}.json`
+        `https://expensetrackerlist-default-rtdb.firebaseio.com/${idToken}/${id}.json`
       )
       .then(res => {
         priceInputRef.current.value = res.data.price;
@@ -37,7 +39,7 @@ function ExpenseForm() {
       const updateId = queryParams.get("id");
       
       await axios.put(
-        `https://expensetrackerlist-default-rtdb.firebaseio.com/expense/${updateId}.json`,
+        `https://expensetrackerlist-default-rtdb.firebaseio.com/${idToken}/${updateId}.json`,
         {
           price: priceInputRef.current.value,
           des: desInputRef.current.value,
@@ -63,7 +65,7 @@ function ExpenseForm() {
       };
       const data = await axios
         .post(
-          "https://expensetrackerlist-default-rtdb.firebaseio.com/expense.json",
+          `https://expensetrackerlist-default-rtdb.firebaseio.com/${idToken}.json`,
           obj
         )
         .then(res => res.data)

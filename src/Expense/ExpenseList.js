@@ -8,6 +8,7 @@ import { ExpenseSliceActions } from "../store/ExpenseReducer";
 function ExpenseTable(props) {
   const storeExpenseList = useSelector(state => state.expense.list);
   const isPremiumActivate = useSelector(state => state.expense.activatePremium);
+  const userId = useSelector(state=>state.authentication.userId)
   useLayoutEffect(() => {
     if (isPremiumActivate) {
       document.body.style.backgroundColor = "black";
@@ -20,7 +21,7 @@ function ExpenseTable(props) {
   const getData = async () => {
     let arr = [];
     await fetch(
-      "https://expensetrackerlist-default-rtdb.firebaseio.com/expense.json"
+      `https://expensetrackerlist-default-rtdb.firebaseio.com/${userId}.json`
     ).then(res=>res.json()).then(data => {
         for (let obj in data) {
           arr.push({ id: obj, ...data[obj] });
@@ -28,6 +29,7 @@ function ExpenseTable(props) {
       })
       .catch(err => console.log(err));
     if (arr !== undefined) {
+      
       dispatch(ExpenseSliceActions.fetchExpense(arr));
     }
   };
@@ -37,7 +39,7 @@ function ExpenseTable(props) {
   }, [props.isUpdate]);
   const handleDelete = async id => {
     await fetch(
-      `https://expensetrackerlist-default-rtdb.firebaseio.com//expense/${id}.json`,{
+      `https://expensetrackerlist-default-rtdb.firebaseio.com/${userId}/${id}.json`,{
         method: 'DELETE'
       }
     );
@@ -74,7 +76,7 @@ function ExpenseTable(props) {
           </tr>
         </thead>
         <tbody>
-          {storeExpenseList !== undefined
+          {storeExpenseList.length!==0
             ? storeExpenseList.map((list, index) =>
                 <tr key={index}>
                   <td>
@@ -113,8 +115,8 @@ function ExpenseTable(props) {
                   </td>
                 </tr>
               )
-            : <tr style={{ color: "red" }}>
-                <td>ZERO EXPENSE FOUND</td>
+            : <tr>
+                <td style={{ color: "red" }}>ZERO EXPENSE FOUND</td>
               </tr>}
         </tbody>
       </Table>
