@@ -39,8 +39,9 @@ function Signup() {
         emailInputRef.current.value = "";
         passInputRef.current.value = "";
       } else {
-        console.log(data)
-        localStorage.setItem('idToken',data.localId);
+        
+        localStorage.setItem('idToken',data.idToken);
+        localStorage.setItem('userId',data.localId)
         setShowError({ active: "true", message: "login SuccessFully" });
         setTimeout(() => setShowError({ active: false, message: "" }), 3000);
         dispatch(AuthActions.login(data.localId))

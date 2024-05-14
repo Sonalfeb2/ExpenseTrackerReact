@@ -21,7 +21,7 @@ function ExpenseTable(props) {
   const getData = async () => {
     let arr = [];
     await fetch(
-      `https://expensetrackerlist-default-rtdb.firebaseio.com/${userId}.json`
+      `https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/${userId}.json`
     ).then(res=>res.json()).then(data => {
         for (let obj in data) {
           arr.push({ id: obj, ...data[obj] });
@@ -39,7 +39,7 @@ function ExpenseTable(props) {
   }, [props.isUpdate]);
   const handleDelete = async id => {
     await fetch(
-      `https://expensetrackerlist-default-rtdb.firebaseio.com/${userId}/${id}.json`,{
+      `https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/${userId}/${id}.json`,{
         method: 'DELETE'
       }
     );

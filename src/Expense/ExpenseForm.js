@@ -4,11 +4,11 @@ import ExpenseTable from "./ExpenseList";
 import { useRef, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { ExpenseSliceActions } from "../store/ExpenseReducer";
 
 function ExpenseForm() {
-  const idToken = localStorage.getItem('idToken');
+  const userId = useSelector(state => state.authentication.userId)
 
   const dispatch = useDispatch();
   const history = useNavigate();
@@ -25,7 +25,7 @@ function ExpenseForm() {
     setIsUpdate(true);
     axios
       .get(
-        `https://expensetrackerlist-default-rtdb.firebaseio.com/${idToken}/${id}.json`
+        `https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/${userId}/${id}.json`
       )
       .then(res => {
         priceInputRef.current.value = res.data.price;
@@ -39,7 +39,7 @@ function ExpenseForm() {
       const updateId = queryParams.get("id");
       
       await axios.put(
-        `https://expensetrackerlist-default-rtdb.firebaseio.com/${idToken}/${updateId}.json`,
+        `https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/${userId}/${updateId}.json`,
         {
           price: priceInputRef.current.value,
           des: desInputRef.current.value,
@@ -65,7 +65,7 @@ function ExpenseForm() {
       };
       const data = await axios
         .post(
-          `https://expensetrackerlist-default-rtdb.firebaseio.com/${idToken}.json`,
+          `https://expensetrackerauth-8f7b2-default-rtdb.firebaseio.com/${userId}.json`,
           obj
         )
         .then(res => res.data)
